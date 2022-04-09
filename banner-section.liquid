@@ -1,0 +1,119 @@
+<section>
+  <div class="banner_section">
+    <div class="page-width">
+      <div class="banner_text py-2 py-md-5">
+        <ul class="pl-0 mb-0 list-unstyled d-flex justify-content-center">
+          {% if section.settings.clen_text != blank %}
+          <li class="d-flex align-items-center position-relative">
+            <div>
+              {% include 'clean-icon' %}
+            </div>
+            <h3 class="font-s-30 text-white mb-0 fw-400 ps-3">{{ section.settings.clen_text }}</h3>
+          </li>
+          {% endif %}
+          {% if section.settings.plan_text != blank %}
+          <li class="d-flex align-items-center position-relative">
+            <div>
+              {% include 'plan-icon' %}
+            </div>
+            <h3 class="font-s-30 text-white mb-0 fw-400 ps-3">{{ section.settings.plan_text }}</h3>
+          </li>
+          {% endif %}
+          {% if section.settings.science_text != blank %}
+          <li class="d-flex align-items-center position-relative">
+            <div>
+              {% include 'science-icon' %}
+            </div>
+            <h3 class="font-s-30 text-white mb-0 fw-400 ps-3">{{ section.settings.science_text }}</h3>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+      <div class="banner_img" style="background: {{ section.settings.bgsection }}">
+
+        {% if section.settings.mobile_banner_img != blank %}
+          <img src="{{ section.settings.banner_img | img_url: 'master' }}"
+               {% if section.settings.banner_img != blank %} class="d-none d-md-block"  {% endif %} >
+          {% endif %} 
+          {% if section.settings.banner_img != blank %}
+          <img src="{{ section.settings.mobile_banner_img | img_url: 'master' }}" class="d-md-none">
+          {% endif %}
+
+          <div class="bannercontent">
+            <h1 class="font-peachy blue-color font-s-65">{{ section.settings.bannertitle }}</h1>
+            {% if section.settings.shop_url != blank %}
+            <a href="{{ section.settings.shop_url }}" class="button-all text-decoration-none text-white font-peachy font-s-30">
+              {{ section.settings.buttontext }}
+            </a>
+            {% endif %}
+            <div class="aftertext blue-color">{{ section.settings.aftertext }}</div>
+          </div>
+      
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+"name": "New Banner",
+"settings": [
+{
+"type": "text",
+"id": "clen_text",	
+"label": "Text"
+},
+{
+"type": "text",
+"id": "plan_text",	
+"label": "Text"
+},
+{
+"type": "text",
+"id": "science_text",	
+"label": "Text"
+},
+{
+"type": "image_picker",
+"id": "banner_img",
+"label": "Banner"
+},
+{
+"type": "image_picker",
+"id": "mobile_banner_img",
+"label": "Mobile Banner"
+},
+{
+"type": "text",
+"id": "buttontext",
+"label": "Button text"
+},
+{
+"type": "url",
+"id": "shop_url",
+"label": "Banner Url"
+},
+{
+"type": "color",
+"id": "bgsection",
+"label": "Section background"
+},
+{
+"type": "textarea",
+"id": "bannertitle",
+"label": "Banner title"
+},
+{
+"type": "textarea",
+"id": "aftertext",
+"label": "Sub title"
+}
+],
+"presets": [
+{
+"name": "New banner",
+"category": "banner"
+}
+]
+}
+{% endschema %}
+
