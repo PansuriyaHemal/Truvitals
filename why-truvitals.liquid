@@ -1,0 +1,44 @@
+<section class="position-relative">
+    <div class="asset_image start-0 top-0 position-absolute d-none d-lg-block">
+      <img class="lazyload"
+         data-src="https://cdn.shopify.com/s/files/1/0562/5266/1910/files/image_776_1.png?v=1637684514"
+         data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+         data-sizes="auto">
+    </div>
+<div class="page-width">
+   {% if section.settings.heading != blank %}
+    <div class="section-header mt-0 mt-md-5 mb-3 mb-md-4 d-flex align-items-center justify-content-center">
+      <div class="logo_img">
+      	{% include 'heading-logo' %}
+      </div>
+      <h2 class="font-peachy orange-color font-s-55">{{ section.settings.heading | escape }}</h2>
+    </div>
+  {% endif %}
+  <div class="why_truvital_main d-none d-md-block">
+  	{% if section.settings.why_image != blank %}
+    {%- assign img_url = section.settings.why_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+            <img class="lazyload js" 
+                 data-src="{{ img_url }}"
+                 data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                 data-aspectratio="{{ section.settings.why_image.aspect_ratio }}"
+                 data-sizes="auto">
+    {% endif %}
+  </div>
+</div>
+  <div class="why_truvital_main text-center d-md-none">
+  	{% if section.settings.mobile_why_image != blank %}
+    {%- assign img_urlmobile = section.settings.mobile_why_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+            <img class="lazyload js" 
+                 data-src="{{ img_urlmobile }}"
+                 data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                 data-aspectratio="{{ section.settings.mobile_why_image.aspect_ratio }}"
+                 data-sizes="auto">
+    {% endif %}
+  </div>
+  <div class="asset_image end-0 bottom-0 position-absolute d-none d-lg-block">
+      <img class="lazyload"
+         data-src="https://cdn.shopify.com/s/files/1/0562/5266/1910/files/image_795_1.png?v=1637685557"
+         data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+         data-sizes="auto">
+    </div>
+</section>
