@@ -1,0 +1,283 @@
+<section>
+  <div class="product-template__container pt-md-5 pt-2 page-width"
+       id="ProductSection-{{ section.id }}"
+       data-section-id="{{ section.id }}"
+       data-section-type="product"
+       data-enable-history-state="true"
+       data-ajax-enabled="{{ settings.enable_ajax }}"
+       >
+    {% comment %}
+    Get first variant, or deep linked one
+    {% endcomment %}
+    {%- assign current_variant = product.selected_or_first_available_variant -%}
+    {%- assign product_image_zoom_size = '1024x1024' -%}
+    {%- assign product_image_scale = '2' -%}
+    {%- assign enable_image_zoom = section.settings.enable_image_zoom -%}
+    {%- assign compare_at_price = current_variant.compare_at_price -%}
+    {%- assign price = current_variant.price -%}
+
+    {% case section.settings.media_size %}
+    {% when 'small' %}
+    {%- assign product_media_width = 'medium-up--one-third' -%}
+    {%- assign product_description_width = 'medium-up--two-thirds' -%}
+    {%- assign height = 345 -%}
+    {% when 'medium' %}
+    {%- assign product_media_width = 'medium-up--one-half' -%}
+    {%- assign product_description_width = 'medium-up--one-half' -%}
+    {%- assign height = 530 -%}
+    {% when 'large' %}
+    {%- assign product_media_width = 'medium-up--two-thirds' -%}
+    {%- assign product_description_width = 'medium-up--one-third' -%}
+    {%- assign height = 720 -%}
+    {% when 'full' %}
+    {%- assign product_media_width = '' -%}
+    {%- assign product_description_width = '' -%}
+    {%- assign height = 1090 -%}
+    {%- assign enable_image_zoom = false -%}
+    {% endcase %}
+
+    <div class="grid product-single{% if section.settings.enable_payment_button %} product-single--{{ section.settings.media_size }}-media{% endif %}">
+
+      <div class="grid__item product-single__media-group {{ product_media_width }}{% if section.settings.media_size == 'full' %} product-single__media-group--full{% endif %}" data-product-single-media-group>
+
+        <div class="product_slider slick_arrow">
+          <div class="slider_div">
+            <div class="slider_main_div">
+              <div class="product-slider mb-0 ">
+                {% for image in product.images %}
+                <div class="img_box_slide zoom" id="ex1">
+                  <img class="lazyload w-100 image-zoom" src="{{ image.src | img_url:'original' }}" data-zoom="{{ image.src | img_url: '1024x1024', scale: 2 }}" alt="{{ product.title }}">
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="thumbnai_slider">
+              {% for image in product.images %}
+              <div class="img_box_slide">
+                <img class="lazyload" data-src="{{ image.src | img_url:'original' }}" alt="{{ product.title }}">
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {%- assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
+
+      <div class="prodmain {% if product.tags contains 'only-ncr' %}ncronly {% endif %} grid__item {{ product_description_width }}">
+        <div class="product-single__meta mt-md-4 mt-2">
+
+          <h1 class="product-single__title font-s-40 fw-600 blue-color mb-0 mb-md-2">{{ product.title }}</h1>
+          {% if product.metafields.global.subtitle != blank %}
+          <h2 class="sub_afterttitle"> {{product.metafields.global.subtitle}}</h2>
+          {% endif %}
+          {% comment %}Start automatically added Judge.me widget{% endcomment %}
+          {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', concierge_install: true, product: product %}
+          {% comment %}End automatically added Judge.me widget{% endcomment %}
+
+          <script>window.performance.mark('debut:product:title_visible');</script>
+          {% comment %}
+          {%- if cart.taxes_included or shop.shipping_policy.body != blank -%}
+          <div class="product__policies rte" data-product-policies>
+            {%- if cart.taxes_included -%}
+            {{ 'products.product.include_taxes' | t }}
+            {%- endif -%}
+            {%- if shop.shipping_policy.body != blank -%}
+            {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+            {%- endif -%}
+          </div>
+          {%- endif -%}
+          {% endcomment %}
+          {% capture "form_classes" -%}
+          product-form product-form-{{ section.id }}
+          {%- if section.settings.enable_payment_button and product.has_only_default_variant %} product-form--payment-button-no-variants {%- endif -%}
+          {%- if current_variant.available == false %} product-form--variant-sold-out {%- endif -%}
+          {%- endcapture %}
+
+          {% form 'product', product, class:form_classes, novalidate: 'novalidate', data-product-form: '' %}
+          {{ form | payment_terms }}
+          <div class="product__price">
+            <div class="price_main">
+              <span class="product_price font-s-30 fw-600 blue-color">
+                {% if product.compare_at_price > product.price %}
+                {% if product.price_varies %}
+                {%- assign sale_price = product.price | money -%}
+                {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+                {% else %}
+                {{ 'products.product.on_sale' | t }}
+                {{ product.price | money }}
+                {% endif %}
+                {% else %}
+                {% if product.price_varies %}
+                <span class="Main_price font-s-30 fw-600 blue-color">  {{ product.price | money }}</span>
+                {% else %}
+                {{ product.price | money }}
+                {% endif %}
+                {% endif %}
+              </span>
+
+            </div>
+          </div>
+          <div class="product-single__description rte">
+            {{ product.description }}
+          </div>
+          <div class="variants_img text-center d-flex align-items-center justify-content-start">
+            {% if product.metafields.variant_img.variant_img != blank %}
+            <img src="{{product.metafields.variant_img.variant_img }}" class="px-2">
+            {% endif %}
+            {% if product.metafields.variant_img.variant_img2 != blank %}
+            <img src="{{product.metafields.variant_img.variant_img2}}" class="px-2">
+            {% endif %}
+            {% if product.metafields.variant_img.variant_img3 != blank %}
+            <img src="{{product.metafields.variant_img.variant_img3}}" class="px-2">
+            {% endif %}
+          </div>
+
+          {% unless product.has_only_default_variant %}
+          <div class="varint_option">
+            {% for option in product.options_with_values %}
+            <div class="selector-wrapper js product-form__item">
+              {%if option.name == "Size"%}
+              {%assign index = forloop.index %}
+              <div class="variant_option d-flex align-items-center mt-3 mb-3">
+                {%for value in option.values%}
+                <input class="single-option-selector-{{ section.id }}" id="size-{{forloop.index}}" type="radio" name="size" value="{{ value | escape }}" data-index="option{{index}}" {% if option.selected_value == value %}checked{%endif%}/>
+                <label for="size-{{forloop.index}}">
+
+                  {{value}}
+                </label>
+                {%endfor%}
+              </div>
+              {%else%}
+              {%if option.name == "Color"%}
+              <label>{{option.name}}</label>
+              {%assign index = forloop.index %}
+              <div class="variant-swatches">
+                {%for value in option.values%}
+                <input class="single-option-selector-{{ section.id }}" id="color-{{forloop.index}}" type="radio" name="color" value="{{ value | escape }}" data-index="option{{index}}" {% if option.selected_value == value %}checked{%endif%}/>
+                <label for="color-{{forloop.index}}">
+                  <img src="{{value | escape | append:'.jpg' | strip | asset_url }}" alt="{{value}}"/>
+                </label>
+                {%endfor%}
+              </div>
+              {%else%}
+              <label {% if option.name == 'default' %}class="label--hidden" {% endif %}for="SingleOptionSelector-{{ forloop.index0 }}">
+                {{ option.name }}
+              </label>
+              <select class="single-option-selector single-option-selector-{{ section.id }} product-form__input"
+                      id="SingleOptionSelector-{{ forloop.index0 }}"
+                      data-index="option{{ forloop.index }}">
+                {% for value in option.values %}
+                <option value="{{ value | escape }}"{% if option.selected_value == value %} selected="selected"{% endif %}>{{ value }}</option>
+                {% endfor %}
+              </select>
+              {%endif%}
+              {%endif%}
+            </div>
+            {% endfor %}
+          </div>
+          {% endunless %}
+
+          <select name="id" id="ProductSelect-{{ section.id }}" class="product-form__variants no-js">
+            {% for variant in product.variants %}
+            <option value="{{ variant.id }}"
+                    {%- if variant == current_variant %} selected="selected" {%- endif -%}>
+              {{ variant.title }}  {%- if variant.available == false %} - {{ 'products.product.sold_out' | t }}{% endif %}
+                </option>
+            {% endfor %}
+          </select>
+
+          {% if section.settings.show_quantity_selector %}
+          <div class="qtydiv">
+            <div class="qtybox">
+              <span class="btnqty qtyminus icon icon-minus">-</span>
+              <input type="text" id="quantity" name="quantity" value="1" min="1" class="quantity-selector quantity-input" readonly="">
+              <span class="btnqty qtyplus icon icon-plus">+</span>
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="product-form__error-message-wrapper product-form__error-message-wrapper--hidden{% if section.settings.enable_payment_button %} product-form__error-message-wrapper--has-payment-button{% endif %}"
+               data-error-message-wrapper
+               role="alert"
+               >
+            <span class="visually-hidden">{{ 'general.accessibility.error' | t }} </span>
+            {% include 'icon-error' %}
+            <span class="product-form__error-message" data-error-message>{{ 'products.product.quantity_minimum_message' | t }}</span>
+          </div>
+
+          <div class="product-form__controls-group product-form__controls-group--submit">
+            <div class="d-flex align-items-center">
+              <button type="submit" name="add"
+                      {% unless current_variant.available %} aria-disabled="true"{% endunless %}
+                      aria-label="{% unless current_variant.available %}{{ 'products.product.sold_out' | t }}{% else %}{{ 'products.product.add_to_cart' | t }}{% endunless %}"
+                      class="btn product-form__cart-submit{% if section.settings.enable_payment_button and product.selling_plan_groups == empty %} btn--secondary-accent{% endif %}">
+                <span data-add-to-cart-text>
+                  {% unless current_variant.available %}
+                  {{ 'products.product.sold_out' | t }}
+                  {% else %}
+                  {{ 'products.product.add_to_cart' | t }}
+                  {% endunless %}
+                </span>
+                <span class="hide" data-loader>
+                  {% include 'icon-spinner' %}
+                </span>
+              </button>
+              {% if section.settings.enable_payment_button %}
+              {{ form | payment_button }}
+              {% endif %}
+            </div>
+          </div>
+          {% endform %}
+
+
+          {% if product.tags contains 'only-ncr' %}
+          <div class="limitpin input-wrapper">
+            <input type="text" id="pincodeInputt" value="" placeholder="Enter Pincode">
+            <button id="pinSubmitt" class="pincode-button" >Check</button>
+          </div>
+          <div class="onlymsg">Please enter pincode to check availability in your location</div>
+          <div class="onlymsg_error" style="display:none">Sorry, this pack is currently not available in your location</div>
+          {% else %}
+          {% include 'pincode' %}
+          {% endif %}
+        </div>
+        {%- comment -%}
+        Live region for announcing updated price and availability to screen readers
+        {%- endcomment -%}
+        <p class="visually-hidden" data-product-status
+           aria-live="polite"
+           role="status"
+           ></p>
+
+        {%- comment -%}
+        Live region for announcing that the product form has been submitted and the
+        product is in the process being added to the cart
+        {%- endcomment -%}
+        <p class="visually-hidden" data-loader-status
+           aria-live="assertive"
+           role="alert"
+           aria-hidden="true"
+           >{{ 'products.product.loader_label' | t }}</p>
+
+        <div
+             class="product-single__store-availability-container"
+             data-store-availability-container
+             data-product-title="{{ product.title | escape }}"
+             data-has-only-default-variant="{{ product.has_only_default_variant }}"
+             data-base-url="{{ shop.url }}{{ routes.root_url }}"
+             >
+        </div>
+
+
+
+        {% if section.settings.show_share_buttons %}
+        {% include 'social-sharing', share_title: product.title, share_permalink: product.url, share_image: product.featured_media %}
+        {% endif %}
+      </div>
+
+
+    </div>
+  </div>
+</section>
